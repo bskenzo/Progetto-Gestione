@@ -3,20 +3,23 @@
  <head>
      <meta name="viewport" content="width=device-width, initial-scale=1">
      <link rel="stylesheet" href="/static/css/stile3.css" type="text/css">
- <style>
-.myDiv {
-  float: down;
-  margin: auto;
-  border: 2px outset black;
-  text-align: left;
-  width: 66%;
-  border-radius: 5px;
-  padding: 3px;
-}
- </style>
+     <style>
+        body{background: Url("static/img/grigi.jpg") no-repeat fixed}
+     </style>
+     <style>
+        .myDiv {
+            float: down;
+            margin: auto;
+            border: 2px outset black;
+            text-align: left;
+            width: 66%;
+            border-radius: 5px;
+            padding: 3px;
+        }
+        </style>
  </head>
-<body>
-    
+
+ <body>
    <div class="center">
         <form class="form-inline" action="results" method="get">
             <input class="searchbar" name="barra" onfocus="this.value=''" type="text" title="Search" placeholder="Insert your query..."
@@ -27,19 +30,18 @@
    <div id="adv" class="center1">
         <span><a href="advanced"><button class="transparent_btn button3">Advanced</button></a></span>
    </div><br><br><br>
-        {% for d in data %}
-            <div class="myDiv">
-                <h2>{{ d['Atitle'] }} ~ <i>{{d['Cdirector']}}</i></h2><br>
-                <h4><a href="{{ d['Fpath'] }}"href="">{{ d['Fpath'] }}</a></h4><br>
-                {% if d['Contenthighlights'] == "" %}
-                    <p style="font-size:120%;">{{ d['Bcontent'] }}</p>
-                {% else %}
-                    <p style="font-size:120%;">{{ d['Contenthighlights'] | safe}}</p>
-                {% endif %}
+    {% for d in data %}
+    <div class="myDiv">
+            <h2>{{ d['Atitle'] }} ~ <i>{{d['Cdirector']}}</i></h2><br>
+            <h4><a href="{{ d['Fpath'] }}"href="">{{ d['Fpath'] }}</a></h4><br>
+            {% if d['Contenthighlights'] == "" %}
+                <p style="font-size:120%;">{{ d['Bcontent'] }}</p>
+            {% else %}
+                <p style="font-size:120%;">{{ d['Contenthighlights'] | safe}}</p>
+            {% endif %}
                 <h5 align="right">{{ d['Edate'] }}</h5>
-            </div><br>
-        {% endfor %}
-</div>
+        </div><br>
+    {% endfor %}
  </body>
-</html>
 
+</html>

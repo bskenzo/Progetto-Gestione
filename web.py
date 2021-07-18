@@ -1,20 +1,24 @@
 from flask import Flask, render_template, request
+from whoosh.highlight import highlight
 import query
+import os
+import json
 
 app = Flask(__name__)
 data = []
 headings = ("Title", "Plot", "Director", "Genre", "Data", "Link")
 
 lista_director = []
-# Apro il file director.txt per aggiungere i direttori ad una lista da passare alla gui 
-with open("director.txt", "r", encoding="utf8") as f:
-    for lista in f.readlines():
-        lista_director.append(lista)
+f = open('director.txt', 'r+', encoding='utf-8')
+for name in f.readlines():
+    lista_director.append(name)
 lista_director = list(set(lista_director))
+
 
 @app.route("/")
 def index():
     return render_template('index.html')
+
 
 @app.route('/advanced', methods=['GET', 'POST'])
 def advanced():
@@ -23,10 +27,17 @@ def advanced():
 
 @app.route('/results', methods=['GET', 'POST'])
 def results():
-    ask = {'text': request.args.get('barra'), 'imdb': request.args.get('IMDB'), 'themovie': request.args.get('THEMOVIE'), 'filmsomniac': request.args.get('FILMSOMNIAC'),
-            'from': request.args.get('Da'), 'to': request.args.get('a'), 'director': request.args.get('director')}
-    print(ask)
-    data= query.my_query(ask)
+    ask = {'text': request.args.get('barra'), 'imdb': request.args.get('IMDB'), 'themovie': request.args.get('THEMOVIE'),
+           'filmsomniac': request.args.get('FILMSOMNIAC'), 'from': request.args.get('Da'), 'to': request.args.get('a'),
+           'director': request.args.get('director')}
+
+    count = request.args.get('n_res')
+    if count is None:
+        count = 8
+    else:
+        count = int(count)
+
+    data = query.my_query(ask,count)
     return render_template("results.html", headings=headings, data=data)
 
 

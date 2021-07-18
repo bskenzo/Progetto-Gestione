@@ -71,13 +71,13 @@ def date_filter(query):
     return date_range
 
 # Funzione che risolve la query restituendo i risultati 
-def my_query(query):
+def my_query(query, count):
 
     # Apro l'index
-    ix = open_dir(r"C:\Users\keybl\Desktop\Progetti Python\progetto\indexdir")
+    ix = open_dir(r"C:\Users\Enzo\PycharmProjects\pythonProject\20210515_progetto\indexdir")
 
     # Creo un parser su più campi (titolo e contenuto) raggruppati in OR e con la ricerca automatica sulla variazione morfologica delle parole
-    qp = MultifieldParser(["Atitle","Bcontent","Cdirector"],schema=ix.schema,group=OrGroup,termclass=Variations)
+    qp = MultifieldParser(["Atitle","Bcontent"],schema=ix.schema,group=OrGroup,termclass=Variations)
     
     # Aggiungo il pluggin per il parsing della data
     qp.add_plugin(DateParserPlugin(free=True))
@@ -114,13 +114,13 @@ def my_query(query):
 
     # Se ho settato una data o un range di date ordino i risultati prima per data e poi per score
     if date_range is not None:
-        return search_for_date(ix,sources,q)
+        return search_for_date(ix,sources,q,count)
     # Altrimenti ordino i risultati per score
     else:
-        return search(ix,sources,q)
+        return search(ix,sources,q,count)
 
 # Funzione che restituisce i risultati ordinati per data
-def search_for_date(ix,sources,q):
+def search_for_date(ix,sources,q,count):
     lista = []
 
     # Variabile per fare il sorting sugli score
@@ -131,7 +131,7 @@ def search_for_date(ix,sources,q):
 
     # Cerco i match, li aggiungo per chiave ad un dizionario, e poi aggiungo il dizionario a una lista per poi ritornarla alla gui
     with ix.searcher() as searcher:
-        results = searcher.search(q, limit=None, filter=sources, terms=True, sortedby=[date,scores])
+        results = searcher.search(q, limit=count, filter=sources, terms=True, sortedby=[date,scores])
         results.fragmenter.charlimit = None
         results.fragmenter.maxchars = 300
         results.fragmenter.surround = 10000
@@ -145,17 +145,15 @@ def search_for_date(ix,sources,q):
                 else:
                     dicto.update({f"{f}":result[f]})
             dicto["Contenthighlights"] = result.highlights("Bcontent")
-            dicto["Titlehighlights"] = result.highlights("Atitle")
-            dicto["Directorhighlights"] = result.highlights("Cdirector")
             lista.append(dicto)
     return lista
-# "BBhighlights"
+
 # Funzione che restituisce i risultati ordinati per score
-def search(ix,sources,q):
+def search(ix,sources,q,count):
     lista = []
 
     with ix.searcher() as searcher:
-        results = searcher.search(q, limit=None, filter=sources, terms=True)
+        results = searcher.search(q, limit=count, filter=sources, terms=True)
         results.fragmenter.charlimit = None
         results.fragmenter.maxchars = 300
         results.fragmenter.surround = 10000
@@ -170,7 +168,6 @@ def search(ix,sources,q):
                     dicto.update({f"{f}":result[f]})
             dicto["Contenthighlights"] = result.highlights("Bcontent")
             dicto["Titlehighlights"] = result.highlights("Atitle")
-            dicto["Directorhighlights"] = result.highlights("Cdirector")
             lista.append(dicto)
     return lista
 

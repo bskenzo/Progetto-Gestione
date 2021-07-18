@@ -6,18 +6,18 @@
  </head>
 
  <body>
-  <canvas id="canvas1"></canvas> 
+  <canvas id="canvas1"></canvas>
   <script type=text/javascript src="{{ url_for('static', filename='js/script.js') }}"></script>
-   <div class="center">
-       <form class="form-inline" action="results" method="get">
+	<div class="center">
+		<form class="form-inline" action="results" method="get">
 			<input class="searchbar" name="barra" onfocus="this.value=''" type="search" id="mysearch_index" title="Search"
-                   placeholder="Insert your query..." required="required">
-       <span><a href="results"><button class="button button1" id="src">Search</button></a></span>
-       </form>
-           <div id="adv" class="pad_top">
-			<a href="advanced"><button class="transparent_btn button3">Advanced</button></a>
-           </div>
-   </div>
+					placeholder="Insert your query..." required="required">
+		    <a href="results"><button class="button button1" id="src">Search</button></a>
+		</form>
+	</div>
+	<div id="adv" class="center1">
+		<a href="advanced"><button class="transparent_btn button3">Advanced</button></a>
+	</div>
 
  </body>
 
