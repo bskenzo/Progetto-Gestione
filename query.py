@@ -3,6 +3,7 @@ from whoosh.qparser.dateparse import DateParserPlugin
 from whoosh.index import open_dir
 from whoosh.query import Variations
 from whoosh import scoring, sorting
+import os.path
 
 # Funzione filtro che seleziona la sorgente delle informazioni 
 def source_filter(query, ix):
@@ -74,10 +75,11 @@ def date_filter(query):
 def my_query(query, count):
 
     # Apro l'index
-    ix = open_dir(r"C:\Users\Enzo\PycharmProjects\pythonProject\20210515_progetto\indexdir")
+    root = os.path.abspath(os.curdir)
+    ix = open_dir(root + r'\indexdir')
 
     # Creo un parser su più campi (titolo e contenuto) raggruppati in OR e con la ricerca automatica sulla variazione morfologica delle parole
-    qp = MultifieldParser(["Atitle","Bcontent"],schema=ix.schema,group=OrGroup,termclass=Variations)
+    qp = MultifieldParser(["Atitle","Bcontent","Cdirector"],schema=ix.schema,group=OrGroup,termclass=Variations)
     
     # Aggiungo il pluggin per il parsing della data
     qp.add_plugin(DateParserPlugin(free=True))
@@ -106,7 +108,7 @@ def my_query(query, count):
   
     # Se abbiamo settato un regista aggiungo la ricerca per regista (in AND)   
     if director is not None:
-        query_text = query_text + " AND " + str(director)
+        query_text = "(" + query_text + ") AND " + str(director)
 
     # Parserizzo la query
     q = qp.parse(query_text)
@@ -145,6 +147,8 @@ def search_for_date(ix,sources,q,count):
                 else:
                     dicto.update({f"{f}":result[f]})
             dicto["Contenthighlights"] = result.highlights("Bcontent")
+            dicto["Titlehighlights"] = result.highlights("Atitle")
+            dicto["Directorhighlights"] = result.highlights("Cdirector")
             lista.append(dicto)
     return lista
 
@@ -168,6 +172,7 @@ def search(ix,sources,q,count):
                     dicto.update({f"{f}":result[f]})
             dicto["Contenthighlights"] = result.highlights("Bcontent")
             dicto["Titlehighlights"] = result.highlights("Atitle")
+            dicto["Directorhighlights"] = result.highlights("Cdirector")
             lista.append(dicto)
     return lista
 
