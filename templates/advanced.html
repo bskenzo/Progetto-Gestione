@@ -2,10 +2,11 @@
 <html>
 
  <head>
-	 <link rel="stylesheet" href="/static/css/stile2.css" type="text/css">
-	 <style>
-        body{background: Url("static/img/grigi.jpg") no-repeat fixed}
-     </style>
+	<link rel="stylesheet" href="/static/css/stile2.css" type="text/css">
+	<style>
+		body{background: Url("static/img/grigi.jpg") no-repeat fixed}
+    </style>
+	<script src="https://code.jquery.com/jquery-3.5.0.js"></script>
  </head>
 
  <body>
@@ -44,7 +45,7 @@
 		</div>
 		<div class="query-box" class="query-box-wrapper">
 			<textarea id="query-box-input" class="query-box-input" name="barra"
-				placeholder="Enter / edit your search query here"></textarea>
+				required="required" placeholder="Enter / edit your search query here"></textarea>
 			<a href="results"><button class="button button1" id="search">Search</button></a>
 		</div>
 	</form>
@@ -94,4 +95,50 @@
 			document.getElementById("AND").onclick = create_query_and;
 		}
 	}
+
+	function rem2(){
+		var myrem = document.getElementById("add");
+		myrem.remove()
+		var btn = document.createElement("BUTTON1");
+		var btn2 = document.createElement("BUTTON2");
+		btn.innerHTML = "OR";
+		btn2.innerHTML = "AND";
+		btn.className = "button button1"
+		btn2.className = "button button1"
+		btn.setAttribute("ID","OR")
+		btn2.setAttribute("ID","AND")
+		document.getElementById("pad_y").appendChild(btn);
+		document.getElementById("pad_y").appendChild(btn2);
+		document.getElementById("OR").onclick = create_query_or;
+		document.getElementById("AND").onclick = create_query_and;
+	}
+
+	function add(){
+		// if( document.getElementById("query-box-input").value.length < 2){
+			var myrem = document.getElementById("OR");
+			var myrem2 = document.getElementById("AND");
+			myrem.remove()
+			myrem2.remove()
+			var btn = document.createElement("BUTTON1");
+			btn.innerHTML = "ADD";
+			btn.className = "button button1"
+			btn.setAttribute("ID","add")
+			document.getElementById("pad_y").appendChild(btn);
+			document.getElementById("OR").onclick = create_query;
+		// }
+	}
+</script>
+
+<script>
+	$("#query-box-input").keyup(function() {
+		if($.trim($("#query-box-input").val())){
+		rem2();}
+	});
+</script>
+
+<script>
+	$("#query-box-input").keyup(function () {
+		if(!$("#query-box-input").val()){
+			add();}
+	})
 </script>
