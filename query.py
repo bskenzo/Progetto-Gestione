@@ -4,6 +4,7 @@ from whoosh.index import open_dir
 from whoosh.query import Variations
 from whoosh import scoring, sorting
 import os.path
+from nltk.corpus import wordnet
 
 # Funzione filtro che seleziona la sorgente delle informazioni 
 def source_filter(query, ix):
@@ -111,6 +112,7 @@ def my_query(query, count):
         query_text = "(" + query_text + ") AND " + str(director)
 
     # Parserizzo la query
+    expansion_query(query_text)
     q = qp.parse(query_text)
     print("parsed query " + str(q))
 
@@ -175,6 +177,19 @@ def search(ix,sources,q,count):
             dicto["Directorhighlights"] = result.highlights("Cdirector")
             lista.append(dicto)
     return lista
+
+from nltk.corpus import wordnet
+from nltk.corpus.reader.wordnet import wup_similarity
+
+def expansion_query(query):
+    synonyms = []
+
+    s = wordnet.synsets(query)
+
+    for syn in wordnet.synsets(query):
+        for l in syn.lemmas():
+            synonyms.append(l.name())
+    return list(set(synonyms))
 
 if __name__ == '__main__':
     my_query()

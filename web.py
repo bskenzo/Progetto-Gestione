@@ -38,7 +38,8 @@ def results():
         count = int(count)
 
     data = query.my_query(ask,count)
-    return render_template("results.html", headings=headings, data=data)
+    syn = query.expansion_query(ask['text'])
+    return render_template("results.html", headings=headings, data=data, syns=syn)
 
 
 if __name__ == "__main__":
