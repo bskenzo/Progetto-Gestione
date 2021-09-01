@@ -62,14 +62,14 @@ def date_filter(query):
     to_date = str.replace(query['to'], '-', '')
 
     # Inizializzo il range con le date recuperate dalla gui
-    date_range = f"Edate:[{from_date} to {to_date}]"
+    date_range = f"date:[{from_date} to {to_date}]"
 
     # Se è settata solo la data di fine imposto data_range a "to to_date"
     if not from_date and to_date is not None:
-        date_range = f"Edate:[to {to_date}]"
+        date_range = f"date:[to {to_date}]"
     # Altrimenti se è settata solo la data di inizio imposto data_range a "from_date to today"
     elif from_date is not None and not to_date:  # if just the ending date is unset
-        date_range = f"Edate:[{from_date} to today]"
+        date_range = f"date:[{from_date} to today]"
 
     return date_range
 
@@ -135,7 +135,7 @@ def search(ix,sources,q,count,bool):
     scores = sorting.ScoreFacet()
 
     # Variabile per fare il sorting sulla data
-    date = sorting.FieldFacet("Edate")
+    date = sorting.FieldFacet("date")
 
     # Se ho settato la data il filtro sarà per data e per score
     if bool:
@@ -144,7 +144,7 @@ def search(ix,sources,q,count,bool):
         lista_sort = [scores]
 
     # Cerco i match, li aggiungo per chiave ad un dizionario, e poi aggiungo il dizionario a una lista per poi ritornarla alla gui
-    with ix.searcher() as searcher:
+    with ix.searcher(weighting=scoring.BM25F()) as searcher:
         results = searcher.search(q, limit=count, filter=sources, terms=True, sortedby=lista_sort)
         results.fragmenter.charlimit = None
         results.fragmenter.maxchars = 300
@@ -153,7 +153,7 @@ def search(ix,sources,q,count,bool):
         for result in results:
             dicto = {}
             for f in result.fields():
-                if f == "Edate":
+                if f == "date":
                     data =  result[f]
                     data = data.date()
                     dicto.update({f"{f}":data})

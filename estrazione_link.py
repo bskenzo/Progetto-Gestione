@@ -64,7 +64,7 @@ def check_duplicate(tit,y,story,ge,di,l):
         link_list.append(l)
 
 # Funzione che recupera le informazioni dal sito ibdm
-def retrive_link_ibdm():
+def retrive_link_imdb():
 
     # Richiede la pagina Web
     r = requests.get('https://www.imdb.com/feature/genre/?ref_=nv_ch_gr')
@@ -83,7 +83,7 @@ def retrive_link_ibdm():
         page_genre = requests.get(link)
         soup2 = BeautifulSoup(page_genre.content, 'html.parser')
         # Per ogni categoria navigo per 5 pagine (Ogni pagina ha 50 film e le categorie sono 24)
-        for _ in range(1,6):
+        for _ in range(1,10):
 
             # Recupero il link alla prossima pagina
             next_page = soup2.find('div', {'class':'desc'})
@@ -106,75 +106,62 @@ def retrive_link_ibdm():
 
                 # Recupero il titolo
                 tit = None
-                for i in soup3.find_all('div', {'class':'title_wrapper'}):
+                for i in soup3.find_all('h1', {'data-testid':'hero-title-block__title'}):
                     if i is not None:
-                        tit = i.find('h1')
+                        tit = i.text
                         if tit is not None:
-                            tit = tit.text.strip()
+                            tit = tit.strip()
                             # elimina eventuali date scritte tra parentesi
                             tit = re.sub(r"\([^()]*\)", "", tit)
                             tit = tit.strip()
 
                 # Raccolgo il regista
-                i = soup3.find('div', {'class':'plot_summary'})
+                i = soup3.find('li', {'data-testid':'title-pc-principal-credit'})
                 di = None
                 if i is not None:
-                    for j in i.find_all('div', {'class':'credit_summary_item'}):
-                        dire = j.find('h4', {'class':'inline'})
-                        if dire is not None and dire.text == "Director:":
-                            di = j.find('a')
-                            di = di.text.strip() 
+                    dire = i.find('span')
+                    if dire is not None and dire.text == "Director":
+                        dire = i.find('a', {'class':'ipc-metadata-list-item__list-content-item ipc-metadata-list-item__list-content-item--link'})
+                        di = dire.text.strip() 
 
                 # Raccolgo l'anno
                 y = None
-                i = soup3.find('div', {'id':'titleDetails'})
-                if i is not None:
-                    if i.find('h4').text != 'Official Sites:':
-                        div = i.find('div', {'class': 'txt-block'}).find_next_sibling().find_next_sibling()
-                    else:
-                        div = i.find('div', {'class': 'txt-block'}).find_next_sibling().find_next_sibling().find_next_sibling()
-               
-                    if div is not None:
-                        y = div.find('h4')
-                        if y is not None:
-                            y = y.next_element.next_element
-                            y = re.sub(r"\([^()]*\)", "", y)
-                            y = y.strip()
-
-                            #controllo che la data sia scritta come gg/mm/aa
-                            matched = re.match(r"[0-9]{1,2}[\s][A-z]{1,9}[\s][0-9]{4}",y)
-                            is_match = bool(matched)
-                            if not is_match:
-                                y = ""
-                            else:
-                                # modifico il formato della data
-                                y = parse(y)
-                                y= y.strftime('%d/%m/%Y')
-                            y = y.strip()
+                i = soup3.find('li', {'data-testid':'title-details-releasedate'})
+                if i is not None: 
+                    y = i.find('a', {'class':'ipc-metadata-list-item__list-content-item ipc-metadata-list-item__list-content-item--link'})
+                    if y is not None:
+                        y = y.text
+                        y = re.sub(r"\([^()]*\)", "", y)
+                        
+                        #controllo che la data sia scritta come gg/mm/aa
+                        matched = re.match(r"[A-z]{1,9}[\s][0-9]{1,2},[\s][0-9]{4}",y)
+                        is_match = bool(matched)
+                        if not is_match:
+                            y = ""
+                        else:
+                        # modifico il formato della data
+                            y = parse(y)
+                            y= y.strftime('%d/%m/%Y')
+                        y = y.strip()
                 
                 # Raccolgo le trame
-                i = soup3.find('div', {'id':'titleStoryLine'})
+                i = soup3.find('div', {'data-testid':'storyline-plot-summary'})
                 story = None
                 if i is not None:
-                    i = i.find('div', {'class':'inline canwrap'})
-                    if i is not None:
-                        story = i.find('span')
-                        if story is not None:
-                            story.text.strip()
-                            matched = re.match(r".*plot.*unknown.*",story.text.lower())
-                            is_match = bool(matched)
-                            if is_match:
-                                story = None
-                            else:
-                                story = story.text.strip()
+                    story = i.text
+                    story = re.sub(r"—[A-z]*\s{0,1}.*$", "", story) 
+                    matched = re.match(r".*plot.*unknown.*",story.lower())
+                    is_match = bool(matched)
+                    if is_match:
+                        story = None
+                    else:
+                        story = story.strip()
                             
                 # Raccolgo i generi
-                i = soup3.find('div', {'class':'see-more inline canwrap'})
-                if i is not None:
-                    i = i.find_next_sibling('div', {'class':'see-more inline canwrap'})
+                i = soup3.find('li', {'data-testid':'storyline-genres'})
                 if i is not None:
                     ge = []
-                    for gen in i.find_all('a'):
+                    for gen in i.find_all('li'):
                         if gen is not None:
                             ge.append(gen.text.strip())
                 else:
@@ -194,7 +181,7 @@ def retrive_link_ibdm():
     dictionary = create_dictionary(title,year,storyline,genre,director,link_list)
 
     # Creo un file json contente i film
-    with open(root + r"\idbm.json", "w", encoding="utf8") as f:
+    with open(root + r"\imdb.json", "w", encoding="utf8") as f:
         json.dump(dictionary,f,indent=4,ensure_ascii=False)
 
 # Funzione che recupera le informazioni dal sito themovie
@@ -208,7 +195,7 @@ def retrive_link_themovie():
     inizialize_list()
 
     # Navigo per 149 pagine (se esistono) (Ogni pagina ha 20 film)
-    for page in range(1,150):
+    for page in range(1,250):
       
         # Recupero i link dei film all'interno della pagina
         i = soup.find('div', {'id':'page_'+str(page)})
@@ -387,9 +374,9 @@ def retrive_link_filmsomniac():
 
 start = 0.0
 print('inizio    : ' + str(start))
-# retrive_link_ibdm()
-# retrive_link_themovie()
-retrive_link_filmsomniac()
+retrive_link_imdb()
+retrive_link_themovie()
+# retrive_link_filmsomniac()
 end = timer()
 print('fine      : ' + str(end))
 print('intervallo: ' + str((int(end - start) / 60)) + " minuti")

@@ -8,8 +8,8 @@ from whoosh.analysis import StemmingAnalyzer
 def main(root):
 
     # Lo schema dell'index (Data di uscita del film, link al film, titolo del film, trama del film)
-    schema = Schema(Atitle=TEXT(stored=True, field_boost=2.0, analyzer=StemmingAnalyzer()),
-                    Edate=DATETIME(stored=True, sortable=True),
+    schema = Schema(Atitle=TEXT(stored=True, field_boost=3.0, analyzer=StemmingAnalyzer()),
+                    date=DATETIME(stored=True, sortable=True),
                     Bcontent=TEXT(stored=True, analyzer=StemmingAnalyzer()),
                     Dgenre=TEXT(stored=True),
                     Cdirector=TEXT(stored=True),
@@ -37,11 +37,11 @@ def main(root):
                 # estraggo titolo, anno, storia, genere, direttore e link
                 for v in data.values():
                     title = v["title"]
-                    date = v["year"]
+                    Edate = v["year"]
                     try:
-                        date = datetime.datetime.strptime(date, "%d/%m/%Y")     # convert the string in a date obj
+                        Edate = datetime.datetime.strptime(Edate, "%d/%m/%Y")     # convert the string in a date obj
                     except (ValueError):
-                        date = datetime.datetime.strptime("1970-01-02", "%d/%m/%Y")
+                        Edate = datetime.datetime.strptime("1970-01-02", "%d/%m/%Y")
                     content = v["storyline"]
                     genre = v["genre"]
                     director = v["director"]
@@ -57,7 +57,7 @@ def main(root):
                     f.write("\n")
                                 
                     # Aggiunge i film con i loro campi all'index
-                    writer.add_document(Atitle=title, Edate=date, Bcontent=content, Dgenre=genre, Cdirector=director, Fpath=path)
+                    writer.add_document(Atitle=title, date=Edate, Bcontent=content, Dgenre=genre, Cdirector=director, Fpath=path)
 
     # Salva i documenti aggiunti nell'index
     writer.commit()
