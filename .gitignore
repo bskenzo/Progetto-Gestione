@@ -5,3 +5,6 @@ NDCG.png
 Untitled-1.py
 benchmark/Avarage_Precision.png
 benchmark/MAP.png
+__pycache__/app.cpython-39.pyc
+__pycache__/query.cpython-39.pyc
+json_file/imdb_vecchio.json

@@ -28,6 +28,13 @@
 					<option value ="{{ list }}">
 				{% endfor %}
 			</datalist><br><br>
+			&emsp;<label for="genres">Genres&nbsp;</label>
+			<input list="genres" name="genres">
+			<datalist id="genres">
+				{% for list in genres %}
+					<option value ="{{ list }}">
+				{% endfor %}
+			</datalist><br><br>
 			&emsp;<label for="n_res">N°:&nbsp;</label>
 			<input type="number" id="n_res" name="n_res" min="1" max="100" width="10" value="10">
 		</div>

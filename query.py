@@ -54,6 +54,22 @@ def director_filter(query, ix):
     else:
         return qparser.parse(f"({director}")
 
+# Funzione filtro che seleziona il genere
+def genre_filter(query, ix):
+    
+    # Parserizzo solo i generi
+    qparser = QueryParser("Dgenre", ix.schema)
+
+    # Recupero il genere dal campo della gui
+    genre = query['genres']
+
+    # Se genre contiene None o è una stringa vuota imposto genre a None
+    if genre is None or genre == '':
+        return None   
+    # Altrimenti parserizzo in AND il genere
+    else:
+        return qparser.parse(f"({genre}")
+
 # Funzione filtro che seleziona la data o un range di date
 def date_filter(query):
 
@@ -81,7 +97,7 @@ def my_query(query, count):
     ix = open_dir(root + r'\indexdir')
 
     # Creo un parser su più campi (titolo e contenuto) raggruppati in OR e con la ricerca automatica sulla variazione morfologica delle parole
-    qp = MultifieldParser(["Atitle","Bcontent","Cdirector"],schema=ix.schema,group=OrGroup,termclass=Variations)
+    qp = MultifieldParser(["Atitle","Bcontent","Cdirector","Dgenre"],schema=ix.schema,group=OrGroup,termclass=Variations)
     
     # Aggiungo il pluggin per il parsing della data
     qp.add_plugin(DateParserPlugin(free=True))
@@ -89,12 +105,14 @@ def my_query(query, count):
     # Recupero il filtro delle sorgenti da passare alla query
     sources = source_filter(query, ix)
 
-    #Recupero il filtro del produttore da passare alla query
+    #Recupero il filtro del regista da passare alla query
     director = director_filter(query, ix)
+
+    #Recupero il filtro del genere da passare alla query
+    genre = genre_filter(query, ix)
     
     # Recupero la query dalla gui
     query_text = query['text']
-    print("our query " + query_text)
 
     # Controllo se è una query per concetti
     query_text = concept_query(query_text)
@@ -108,12 +126,18 @@ def my_query(query, count):
         query_text += " AND " + date_range
     
     # Se non imposto nessun parametro mi ritorna una lista di dizionari vuota (Controllo utile per advanced)
-    if query_text == "" and director is None and query['imdb'] is None and query['themovie'] is None and query['filmsomniac'] is None and date_range is None:
+    if query_text == "" and director is None and query['imdb'] is None and query['themovie'] is None and query['filmsomniac'] is None and date_range is None and genre is None:
         return [{}],0 
 
     # Se abbiamo settato un regista aggiungo la ricerca per regista (in AND)   
     if director is not None:
         query_text = "(" + query_text + ") AND " + str(director)
+
+    # Se abbiamo settato un genere aggiungo la ricerca per genere (in AND)   
+    if genre is not None:
+        query_text = "(" + query_text + ") AND " + str(genre)
+
+    print("our query " + query_text)
 
     # Parserizzo la query
     q = qp.parse(query_text)

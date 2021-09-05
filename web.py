@@ -8,11 +8,16 @@ data = []
 headings = ("Title", "Plot", "Director", "Genre", "Data", "Link")
 
 lista_director = []
+lista_genres = []
 f = open('director.txt', 'r+', encoding='utf-8')
 for name in f.readlines():
     lista_director.append(name)
 lista_director = list(set(lista_director))
 
+f = open('genres.txt', 'r+', encoding='utf-8')
+for name in f.readlines():
+    lista_genres.append(name)
+lista_genres= list(set(lista_genres))
 
 @app.route("/")
 def index():
@@ -21,14 +26,14 @@ def index():
 
 @app.route('/advanced', methods=['GET', 'POST'])
 def advanced():
-    return render_template('advanced.html', data=lista_director)
+    return render_template('advanced.html', data=lista_director, genres=lista_genres)
 
 
 @app.route('/results', methods=['GET', 'POST'])
 def results():
     ask = {'text': request.args.get('barra'), 'imdb': request.args.get('IMDB'), 'themovie': request.args.get('THEMOVIE'),
            'filmsomniac': request.args.get('FILMSOMNIAC'), 'from': request.args.get('Da'), 'to': request.args.get('a'),
-           'director': request.args.get('director')}
+           'director': request.args.get('director'), 'genres': request.args.get('genres')}
 
     count = request.args.get('n_res')
     if count is None:

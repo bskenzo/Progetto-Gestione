@@ -106,14 +106,20 @@ def retrive_link_imdb():
 
                 # Recupero il titolo
                 tit = None
-                for i in soup3.find_all('h1', {'data-testid':'hero-title-block__title'}):
+                if soup3.find_all('div', {'data-testid':'hero-title-block__original-title'}) != []:
+                    j = soup3.find_all('div', {'data-testid':'hero-title-block__original-title'})
+                else:
+                    j = soup3.find_all('h1', {'data-testid':'hero-title-block__title'})
+                for i in j:
                     if i is not None:
                         tit = i.text
                         if tit is not None:
                             tit = tit.strip()
                             # elimina eventuali date scritte tra parentesi
+                            tit = tit.replace("Original title: ","")
                             tit = re.sub(r"\([^()]*\)", "", tit)
                             tit = tit.strip()
+                            print(tit)
 
                 # Raccolgo il regista
                 i = soup3.find('li', {'data-testid':'title-pc-principal-credit'})
@@ -375,7 +381,7 @@ def retrive_link_filmsomniac():
 start = 0.0
 print('inizio    : ' + str(start))
 retrive_link_imdb()
-retrive_link_themovie()
+# retrive_link_themovie()
 # retrive_link_filmsomniac()
 end = timer()
 print('fine      : ' + str(end))

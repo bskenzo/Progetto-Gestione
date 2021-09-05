@@ -28,36 +28,44 @@ def main(root):
     
     # Creo un file.txt contenente tutti i direttori (utile nella gui)
     with open("director.txt", "w", encoding='utf-8') as f: 
+        with open("genres.txt","w",encoding='utf-8') as g:
         
-        # Per ogni file nella directory json_file -->
-        for filename in filepaths:
-            with open(filename, encoding='utf-8') as file:
-                data = json.loads(file.read())
+            # Per ogni file nella directory json_file -->
+            for filename in filepaths:
+                with open(filename, encoding='utf-8') as file:
+                    data = json.loads(file.read())
 
-                # estraggo titolo, anno, storia, genere, direttore e link
-                for v in data.values():
-                    title = v["title"]
-                    Edate = v["year"]
-                    try:
-                        Edate = datetime.datetime.strptime(Edate, "%d/%m/%Y")     # convert the string in a date obj
-                    except (ValueError):
-                        Edate = datetime.datetime.strptime("1970-01-02", "%d/%m/%Y")
-                    content = v["storyline"]
-                    genre = v["genre"]
-                    director = v["director"]
-                    path = v["link"]
+                    # estraggo titolo, anno, storia, genere, direttore e link
+                    for v in data.values():
+                        title = v["title"]
+                        Edate = v["year"]
+                        try:
+                            Edate = datetime.datetime.strptime(Edate, "%d/%m/%Y")     # convert the string in a date obj
+                        except (ValueError):
+                            Edate = datetime.datetime.strptime("1970-01-02", "%d/%m/%Y")
+                        content = v["storyline"]
 
-                    # Creo un director.txt contenente tutti i direttori (utile nella gui)
-                    director_txt = v["director"].split()
-                    for word in director_txt:
-                        if word != "|":
-                            f.write(word + " ")
-                        else:
-                            f.write("\n")
-                    f.write("\n")
-                                
-                    # Aggiunge i film con i loro campi all'index
-                    writer.add_document(Atitle=title, date=Edate, Bcontent=content, Dgenre=genre, Cdirector=director, Fpath=path)
+                        genre = v["genre"]
+                        list_genre = ""
+                        for gen in genre:
+                            # Creo un genre.txt contenente tutti i generi (utile nella gui)
+                            g.write(gen + "\n")
+                            list_genre += f" {gen}" 
+                        genre = list_genre
+                        director = v["director"]
+                        path = v["link"]
+
+                        # Creo un director.txt contenente tutti i direttori (utile nella gui)
+                        director_txt = v["director"].split()
+                        for word in director_txt:
+                            if word != "|":
+                                f.write(word + " ")
+                            else:
+                                f.write("\n")
+                        f.write("\n")
+                                    
+                        # Aggiunge i film con i loro campi all'index
+                        writer.add_document(Atitle=title, date=Edate, Bcontent=content, Dgenre=genre, Cdirector=director, Fpath=path)
 
     # Salva i documenti aggiunti nell'index
     writer.commit()
