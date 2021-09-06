@@ -56,3 +56,21 @@ Basta semplicemente lanciare:
 Successivamente copiare ed incollare l'url su Google Chrome ed il gioco è fatto!
 
 Buon divertimento!! xD
+
+
+## UTILIZZO
+
+Nella schermata principale è presente una barra di ricerca dove andare ad inserire la query.
+
+Per effettuare phrasal query bisogna mettere la query fra virgolette;
+
+Esempio: "Avengers Endgame"
+
+Andando nella pagina di ricerca avanzata si possono creare query molto più sofisticate.
+Utilizzando i vari filtri è possibile cercare film usciti in un range di date o film di un
+determinato regista; Inoltre si possono selezionare anche i siti dai quali ricevere i risultati.
+Ovviamente è possibile combinare i vari filtri.
+
+Nella pagina avanzata ci sono dei bottoni che fanno da supporto per la creazione di query booleane.
+Di default le parole inserite nella query vengono processate in **OR**.  
+La query risultante verrà visualizzata in un box apposito.
