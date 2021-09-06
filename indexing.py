@@ -17,14 +17,14 @@ def main(root):
                     )
 
     # Crea la directory che conterrà l'index
-    if not os.path.exists(root + r'\indexdir'):
-        os.mkdir(root + r'\indexdir')
+    if not os.path.exists(root + r'/indexdir'):
+        os.mkdir(root + r'/indexdir')
 
     # Crea un index writer per aggiungere i documenti per schema
-    ix = create_in(r".\indexdir", schema)
+    ix = create_in(r"./indexdir", schema)
     writer = ix.writer()
       
-    filepaths = [os.path.join(root + r'\json_file',i) for i in os.listdir(root + r'\json_file')]
+    filepaths = [os.path.join(root + r'/json_file',i) for i in os.listdir(root + r'/json_file')]
     
     # Creo un file.txt contenente tutti i direttori (utile nella gui)
     with open("director.txt", "w", encoding='utf-8') as f: 

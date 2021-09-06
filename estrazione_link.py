@@ -8,9 +8,9 @@ from dateutil.parser import parse
 from timeit import default_timer as timer
 
 # Creo la directory json_file nella directory progetto
-root = os.path.abspath(os.curdir + r"\progetto\json_file")
-if not os.path.exists(root):
-    os.mkdir(r"progetto\json_file")
+root = os.path.abspath(os.curdir)
+if not os.path.exists(root + r"/json_file"):
+    os.mkdir(root + r"/json_file")
 
 # Liste in cui inserirò i dati
 title = []
@@ -187,7 +187,7 @@ def retrive_link_imdb():
     dictionary = create_dictionary(title,year,storyline,genre,director,link_list)
 
     # Creo un file json contente i film
-    with open(root + r"\imdb.json", "w", encoding="utf8") as f:
+    with open(root + r"/json_file/imdb.json", "w", encoding="utf8") as f:
         json.dump(dictionary,f,indent=4,ensure_ascii=False)
 
 # Funzione che recupera le informazioni dal sito themovie
@@ -266,7 +266,7 @@ def retrive_link_themovie():
 
     dictionary = create_dictionary(title,year,storyline,genre,director,link_list)
 
-    with open(root + r"\themovie.json", "w", encoding="utf8") as f:
+    with open(root + r"/json_file/themovie.json", "w", encoding="utf8") as f:
         json.dump(dictionary,f,indent=4,ensure_ascii=False)
 
 # Funzione che recupera le informazioni dal sito filmsomniac
@@ -375,7 +375,7 @@ def retrive_link_filmsomniac():
     dictionary = create_dictionary(title,year,storyline,genre,director,link_list)
 
     # Creo un file json contente i film
-    with open(root + r"\filmsomniac.json", "w", encoding="utf8") as f:
+    with open(root + r"/json_file/filmsomniac.json", "w", encoding="utf8") as f:
         json.dump(dictionary,f,indent=4,ensure_ascii=False)
 
 start = 0.0

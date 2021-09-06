@@ -5,6 +5,10 @@ from whoosh.query import Variations
 from whoosh import scoring, sorting
 import os.path
 import re
+import ssl
+ssl._create_default_https_context = ssl._create_unverified_context
+import nltk
+nltk.download("wordnet")
 from nltk.corpus import wordnet
 
 # Funzione filtro che seleziona la sorgente delle informazioni 
@@ -94,7 +98,7 @@ def my_query(query, count):
 
     # Apro l'index
     root = os.path.abspath(os.curdir)
-    ix = open_dir(root + r'\indexdir')
+    ix = open_dir(root + r'/indexdir')
 
     # Creo un parser su più campi (titolo e contenuto) raggruppati in OR e con la ricerca automatica sulla variazione morfologica delle parole
     qp = MultifieldParser(["Atitle","Bcontent","Cdirector","Dgenre"],schema=ix.schema,group=OrGroup,termclass=Variations)
