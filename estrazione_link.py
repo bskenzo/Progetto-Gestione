@@ -381,7 +381,7 @@ def retrive_link_filmsomniac():
 start = 0.0
 print('inizio    : ' + str(start))
 retrive_link_imdb()
-# retrive_link_themovie()
+retrive_link_themovie()
 # retrive_link_filmsomniac()
 end = timer()
 print('fine      : ' + str(end))

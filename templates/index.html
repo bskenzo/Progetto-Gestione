@@ -5,9 +5,12 @@
   <link rel="stylesheet" href="/static/css/stile1.css" type="text/css">
  </head>
 
- <body>
+ <body scroll="no" style="overflow: hidden">
   <canvas id="canvas1"></canvas>
-  <script type=text/javascript src="{{ url_for('static', filename='js/script.js') }}"></script>
+  <script type=text/javascript src="{{ url_for('static', filename='js/script.js')}}"></script>
+  <div class="center2">
+	<img src="{{ url_for('static', filename='img/Logo4.png') }}">
+  </div>
 	<div class="center">
 		<form class="form-inline" action="results" method="get">
 			<input class="searchbar" name="barra" type="search" id="mysearch_index" title="Search"

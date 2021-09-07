@@ -10,6 +10,7 @@
 	width: 100%;
 	height: 100%;
 	background: radial-gradient(#FFFFFF, #000000);
+  background-repeat: repeat-y;
     z-index: -1;
     pointer-events: none;
 }
@@ -28,20 +29,27 @@
 
 .center{
   margin: auto;
-  margin-top: 21%;
   max-height: 100%;
   max-width: 100%;
-  padding: 3px;
+  padding-top: 1%;
   display: flex;
   text-align: center;
   justify-content: center;
   align-items: center;
+
 }
 
 .center1{
   margin: auto;
   padding: 3px;
-  max-width: 580px;
+  max-width: 695px;
+}
+
+.center2{
+  padding-top: 20%;
+  display: flex;
+  text-align: center;
+  justify-content: center;
 }
 
 .searchbar{
@@ -78,7 +86,7 @@
 }
 
 .button1 {
-  position: fixed;
+  position: static;
   background-color: white;
   color: #0A10B8;
   border: 1px solid #0A10B8;
@@ -113,22 +121,39 @@
   color: white;
 }
 
-@media screen and (max-width: 850px) {
+@media screen and (max-width: 850px), screen and (max-height: 530px) {
   .center{
-    margin-top: 1%;
     display: flex;
     width: 100%;
     margin: auto;
-	margin-top: 21%;
-    padding: 3px;
+    padding-top: 1%;
     text-align: center;
     justify-content: center;
     align-items: center;
   }
 
+  .button1 {
+    position: static;
+    background-color: white;
+    color: #0A10B8;
+    border: 1px solid #0A10B8;
+  }
+  
+  .button1:hover {
+    background-color: #0A10B8;
+    color: white;
+  }
+
+  .center2{
+    padding-top: 5%;
+    display: flex;
+    text-align: center;
+    justify-content: center;
+  }
+
   .center1{
-    margin-top: 1%;
-    width: 255px;
+    margin: 1%;
+    width: 370px;
     margin: auto;
     padding: 3px;
   }
