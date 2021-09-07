@@ -120,7 +120,7 @@ Una volta lanciata l'applicazione, nella home page si trova in primo piano la ba
 
 ## **LINGUAGGIO PER FORMULARE QUERY**
 
-Nella barra di ricerca è possibile specificare queries usando testo libero, operatori booleani e per concetti
+Nella barra di ricerca è possibile specificare queries in lingua inglese usando testo libero, operatori booleani e per concetti
 * Di default la ricerca viene effettuata in OR
     * Per cercare una frase ed evitare che le parole vengano messe in OR bisogna specificare la frase tra virgolette
 
