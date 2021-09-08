@@ -1,4 +1,4 @@
-![Movienet Logo](/static/img/Logo.png)
+![Movienet Logo](/static/img/Logofinale.png)
 
 [LINK TO ENGLISH VERSION](README_ENGLISH.md)
 

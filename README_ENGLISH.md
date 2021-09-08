@@ -1,4 +1,4 @@
-![Movienet Logo](/static/img/Logo.png)
+![Movienet Logo](/static/img/Logofinale.png)
 
 ## **ADVICE**
 
