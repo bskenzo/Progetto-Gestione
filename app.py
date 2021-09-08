@@ -1,5 +1,4 @@
 from flask import Flask, render_template, request
-# from whoosh.highlight import highlight
 import query
 import math
 
@@ -45,40 +44,35 @@ def results():
     syn = query.expansion_query(ask['text'])
     return render_template("results.html", headings=headings, data=data, syns=syn, lun=lunghezza, syn_lun=len(syn))
 
-#     ap = [0 for j in range(11)]  # list for average precision at recall level R
+#     ap = [0.0 for j in range(10)]
 #     mean_ap = 0  # MAP
 #     mean_NDCG = 0  # NDCG
-#     with open("../benchmark/test_queries", "r") as file:  # file containig the queries for testing
-#         n = 1  # number of queries
+#     with open("./benchmark/test_queries.txt", "r") as file:
+#         n = 0
 #         for q in file.readlines():
-#             query['text'] = q
-#             data,lunghezza = query.my_query(query)  # process the query
-#             test_ap, NDCG = benchmark(data, query, n)  # retrieve AP and NDCG
-#             for i in range(11):
-#                 print(test_ap[i])
-#                 ap[i] += test_ap[i]  # sum the values for the AP
-#             mean_ap += sum(test_ap) / 10  # sum the values for the MAP
-#             mean_NDCG += NDCG  # sum the NDCG of each query
-#             print(NDCG)
+#             ask['text'] = q
+
+#             # Setto come siti solo imdb e themoviedb a causa di un malfunzionamento del sito filmsomniac
+#             ask['imdb'] = "*www.imdb.com*"
+#             ask['themovie'] = "*www.themoviedb.org*"
+#             ask['filmsomniac'] = ""
+
+#             data,lunghezza = query.my_query(ask,10)  # Processa le query
+#             test_ap, NDCG = benchmark(data,n+1) # Recupera AP e NDCG 
+#             ap[n] += test_ap  # Lista con le AP di tutte le queries 
+#             mean_NDCG += NDCG
 #             n += 1
 
-#     n -= 1
-#     for i in range(11):
-#         ap[i] /= n  # calculate the AP at each recall level
 #     print(ap)
 
-#     mean_ap /= n  # calculate the MAP
+#     mean_ap = sum(ap) / n # Calcolo della MAP
 #     print(mean_ap)
 
-#     mean_NDCG /= n  # calculate the mean NDCG
+#     mean_NDCG /= n  # Calcolo della mean NDCG
 #     print(mean_NDCG)
 	
-# # benchmark tools
-
+# # Funzione usata per processare il file test_queries.txt
 # def find_nth(haystack, needle, n):
-#     """
-# 	function used to process the file of test queries
-# 	"""
 #     start = haystack.find(needle)
 #     while start >= 0 and n > 1:
 #         start = haystack.find(needle, start + len(needle))
@@ -86,67 +80,69 @@ def results():
 
 #     return start
 
+# # Funzione per i benchmark
+# def benchmark(film,i):
 
-# def benchmark(articles, query, i):
-#     """
-# 	function for calculating the benchmark measures for each query
-# 	"""
-#     ap = [0 for j in range(11)]
-#     DCG_dict = {}  # DCG values of top 10 articles for each query
-#     with open("../benchmark/relevant_documents", "r") as file:  # file containing the relevant documents
+#     with open("./benchmark/relevant_documents.txt", "r") as file:
 #         lines = ""
 #         for row in file.readlines():
 #             lines += row
 
-#     start = find_nth(lines, '[', i) + 1
-#     end = find_nth(lines, ']', i)
-#     lines = lines[start:end]
-#     lines = lines.replace("\'", "")
-#     lines = lines.replace("\n", "")
-#     lines = lines.strip()
+#         start = find_nth(lines, '[', i) + 1
+#         end = find_nth(lines, ']', i)
+#         lines = lines[start:end]
+#         lines = lines.replace("\'", "")
+#         lines = lines.replace("\n", "")
+#         lines = lines.strip()
 
-#     relevant_docs = lines.split(',')
-#     recall = 0
-#     art_cont = 0  # articles counter
-#     rel_cont = 0  # relevants counter
-#     rank_rel = 6  # actual rank of article (for NDCG)
-#     c = 1  # flag
-#     GT_DCG = 6
-#     for doc in relevant_docs:  # set the "ground truth" DCG and values of relevant articles
-#         if c > 1:
-#             GT_DCG += rank_rel / math.log(c, 2)
-#         c += 1
-#         if rank_rel >= 2:
-#             DCG_dict[doc] = rank_rel
-#             rank_rel -= 1
-#         else:
-#             DCG_dict[doc] = rank_rel
+#         relevant_docs = lines.split(',')
 
-#     s = 0  # query DCG
-#     for i in range(1, 11, 1):  # calculate the DCG for the articles retrieved
-#         if i > len(DCG_dict):
-#             break
-#         try:
-#             if i == 1:
-#                 s += DCG_dict[articles[i - 1]['path'][:-1]]
-#             else:
-#                 s += DCG_dict[articles[i - 1]['path'][:-1]] / math.log(i, 2)
-#         except KeyError:
-#             continue
+#         DCG_dict = {}
+#         rank_rel = 6
+#         c = 1
+#         GT_DCG = 6
 
-#     NDCG = s / GT_DCG  # normalize the DCG by the "ground truth"
-
-#     for a in articles:  # calculate the precision at each recall level for each article
-#         art_cont += 1
+#         # Calcolo della NDCG
 #         for doc in relevant_docs:
-#             if a['path'][:-1] == doc:
-#                 rel_cont += 1
-#                 recall += 1
-#                 precision = (rel_cont / art_cont) * 100
-#                 ap[recall] += int(precision)
+#             if c > 1:
+#                 GT_DCG += rank_rel / math.log(c, 2)
+#             c += 1
+#             if rank_rel >= 2:
+#                 DCG_dict[''.join(doc.split())] = rank_rel
+#                 rank_rel -= 1
+#             else:
+#                 DCG_dict[''.join(doc.split())] = rank_rel
 
-#     return ap, NDCG  # return the AP and the NDCG
+#         s = 0
+#         for i in range(1, 11, 1):
+#             if i > len(DCG_dict):
+#                 break
+#             try:
+#                 if i == 1:
+#                     s += DCG_dict[film[i - 1]['Fpath']]
+#                 else:
+#                     s += DCG_dict[film[i - 1]['Fpath']] / math.log(i, 2)
+#             except KeyError:
+#                 continue
 
+#         NDCG = s / GT_DCG
+
+#         ap = 0
+#         num_trovati = 0
+
+#         # Calcolo della AP
+#         for f in range(1,len(film)+1):
+#             for r in range(0,len(relevant_docs)):
+#                 if film[f-1]["Fpath"] == ''.join(relevant_docs[r].split()):
+#                     num_trovati += 1
+#                     ap += num_trovati / f
+#                     break
+#         if num_trovati == 0:
+#             pass
+#         else:
+#             ap /= num_trovati
+
+#     return ap, NDCG
 
 if __name__ == "__main__":
     app.run(debug=True)

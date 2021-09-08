@@ -122,6 +122,7 @@ Once the application has been launched, the search bar is in the foreground on t
 In the search bar is possible to specify queries in english language using free text, boolean operators and for concept
 * By default the search is performed in OR
     * To search for a phrase and avoid that the words are set in OR you need to specify the phrase in quotation marks 
+* In case of less than 10 results, words similar to the one(s) typed will be proposed to help in the search
 
 >EXEMPLES 
 >

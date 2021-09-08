@@ -23,7 +23,7 @@ def AP(models):
     TD_IDF = mpatches.Patch(color='blue', label='TD_IDF')
     Frequency = mpatches.Patch(color='black', label='Frequency')
     plt.legend(handles=[BMF25, TD_IDF, Frequency])
-    plt.savefig(root + r"\Avarage_Precision.png")
+    plt.savefig(root + r"./benchmark/Avarage_Precision.png")
 
 def bars(models, metric):
     labels = []
@@ -59,9 +59,9 @@ def bars(models, metric):
     plt.legend(handles=[BMF25, TD_IDF, Frequency])
 
     if metric == 1:
-        plt.savefig(root + r"\MAP.png")
+        plt.savefig(root + r"./benchmark/MAP.png")
     else:
-        plt.savefig(root + r"\NDCG.png")
+        plt.savefig(root + r"./benchmark/NDCG.png")
     
 if __name__ == "__main__":
     root = os.path.abspath(os.curdir)
@@ -69,21 +69,21 @@ if __name__ == "__main__":
     results = {
 				"BM25F":
 					[
-						[0.0, 79.875, 64.625, 61.375, 54.375, 51.083333333333336, 45.708333333333336, 37.041666666666664, 32.791666666666664, 19.708333333333332, 9.625],
-						45,
-						44
+						[0.0, 87.11111111111111, 84.12698412698413, 10.0, 63.33333333333333, 22.5, 50.0, 51.66666666666667, 42.063492063492064, 11.11111111111111, 69.25925925925925],
+						49,
+						35
 					],
 				"TF_IDF":
 					[
-						[0.0, 55, 54, 47, 43, 37, 34, 32, 24, 19, 9],
-						35,
-						33
+						[0.0, 80.99999999999999, 84.12698412698413, 0.0, 70.00000000000001, 52.77777777777778, 16.666666666666666, 51.66666666666667, 60.95238095238095, 33.819444444444446, 65.95238095238095],
+						52,
+						34
 					],
 				"Frequency":
 					[
-						[0.0, 51, 50, 46, 38, 34, 33, 30, 23, 19, 8],
-						33,
-						29
+						[0.0, 36.547619047619045, 84.12698412698413, 12.5, 62.5, 52.77777777777778, 0.0, 83.33333333333334, 37.777777777777777, 0.0, 64.48979591836734],
+						44,
+						33
 					]
 	 		}
 

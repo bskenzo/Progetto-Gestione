@@ -123,6 +123,7 @@ Una volta lanciata l'applicazione, nella home page si trova in primo piano la ba
 Nella barra di ricerca è possibile specificare queries in lingua inglese usando testo libero, operatori booleani e per concetti
 * Di default la ricerca viene effettuata in OR
     * Per cercare una frase ed evitare che le parole vengano messe in OR bisogna specificare la frase tra virgolette
+* In caso di meno di 10 risultati verranno proposte delle parole simili a quella/e digitate per aiutare nella ricerca
 
 >ESEMPI 
 >
