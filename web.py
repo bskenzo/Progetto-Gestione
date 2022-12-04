@@ -37,9 +37,9 @@ def results():
     else:
         count = int(count)
 
-    data = query.my_query(ask,count)
+    data,lunghezza = query.my_query(ask,count)
     syn = query.expansion_query(ask['text'])
-    return render_template("results.html", headings=headings, data=data, syns=syn)
+    return render_template("results.html", headings=headings, data=data, syns=syn, lun=lunghezza, syn_lun=len(syn))
 
 
 if __name__ == "__main__":

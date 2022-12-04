@@ -37,26 +37,29 @@
    <div id="adv" class="center1">
         <span><a href="advanced"><button class="transparent_btn button3">Advanced</button></a></span>
    </div><br><br>
-   {% if data != [] %}
-        {% for d in data %}
-        <div class="myDiv">
-                <h2>{{ d['Atitle'] }} ~ <i>{{d['Cdirector']}}</i></h2><br>
-                <h4><a href="{{ d['Fpath'] }}"href="">{{ d['Fpath'] }}</a></h4><br>
-                {% if d['Contenthighlights'] == "" %}
-                    <p style="font-size:120%;">{{ d['Bcontent'] }}</p>
-                {% else %}
-                    <p style="font-size:120%;">{{ d['Contenthighlights'] | safe}}</p>
-                {% endif %}
-                    <h5 align="right">{{ d['Edate'] }}</h5>
-            </div><br>
-        {% endfor %}
-    {% else %}
-        <div class="myDiv2">Did you mean:
+   {% if lun < 8 %}
+       {% if syn_lun > 0 %}
+        <div class="myDiv2"><b>Did you mean:</b>
             {% for syn in syns %}
                 <div style="display: inline-block; margin: 1%;"><button class="{{ syn }}" value="{{ syn }}" onclick="search2(this.value)";>{{ syn }}</button></div>
             {% endfor %}
         </div>
+        {% endif %}
     {% endif %}
+
+    {% for d in data %}
+        <div class="myDiv">
+            <h2>{{ d['Atitle'] }} ~ <i>{{d['Cdirector']}}</i></h2><br>
+            <h4><a href="{{ d['Fpath'] }}"href="">{{ d['Fpath'] }}</a></h4><br>
+            {% if d['Contenthighlights'] == "" %}
+                <p style="font-size:120%;">{{ d['Bcontent'] }}</p>
+            {% else %}
+                <p style="font-size:120%;">{{ d['Contenthighlights'] | safe}}</p>
+            {% endif %}
+                <h5 align="right">{{ d['Edate'] }}</h5>
+            </div><br>
+    {% endfor %}
+
  </body>
 
 </html>
@@ -77,6 +80,6 @@
 
 <script>
 	function search2(val){
-        document.getElementById("searchbar").value = val;
+        document.getElementById("searchbar").value += " OR " + val ;
 	}
 </script>
