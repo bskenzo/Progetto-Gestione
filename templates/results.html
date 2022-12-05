@@ -29,7 +29,7 @@
  <body>
    <div class="center">
         <form class="form-inline" action="results" method="get">
-            <input class="searchbar" id="searchbar" name="barra" onfocus="this.value=''" type="text" title="Search" placeholder="Insert your query..."
+            <input class="searchbar" id="searchbar" name="barra" type="text" title="Search" placeholder="Insert your query..."
                    required="required" value="{{ request.args.get('barra') }}">
             <span><a href="results"><button class="button button1" id="search">Search</button></a></span>
         </form>
@@ -37,7 +37,7 @@
    <div id="adv" class="center1">
         <span><a href="advanced"><button class="transparent_btn button3">Advanced</button></a></span>
    </div><br><br>
-   {% if lun < 8 %}
+   {% if lun < 10 %}
        {% if syn_lun > 0 %}
         <div class="myDiv2"><b>Did you mean:</b>
             {% for syn in syns %}
@@ -56,27 +56,13 @@
             {% else %}
                 <p style="font-size:120%;">{{ d['Contenthighlights'] | safe}}</p>
             {% endif %}
-                <h5 align="right">{{ d['Edate'] }}</h5>
+                <h5 align="right">{{ d['date'] }}</h5>
             </div><br>
     {% endfor %}
 
  </body>
 
 </html>
-
-<!-- <script>
-	function search(){
-        var buttons = document.getElementsByClassName("dym");
-        for (var i=0 ; i < buttons.length; i++){
-            (function(index){
-                buttons[index].onclick = function(){
-                    alert(index) ;
-                    document.getElementById("searchbar").value = buttons[index].value;
-                };
-            })(i)
-        }
-	}
-</script> -->
 
 <script>
 	function search2(val){

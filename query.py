@@ -5,6 +5,10 @@ from whoosh.query import Variations
 from whoosh import scoring, sorting
 import os.path
 import re
+import ssl
+ssl._create_default_https_context = ssl._create_unverified_context
+import nltk
+nltk.download("wordnet")
 from nltk.corpus import wordnet
 
 # Funzione filtro che seleziona la sorgente delle informazioni 
@@ -54,6 +58,22 @@ def director_filter(query, ix):
     else:
         return qparser.parse(f"({director}")
 
+# Funzione filtro che seleziona il genere
+def genre_filter(query, ix):
+    
+    # Parserizzo solo i generi
+    qparser = QueryParser("Dgenre", ix.schema)
+
+    # Recupero il genere dal campo della gui
+    genre = query['genres']
+
+    # Se genre contiene None o è una stringa vuota imposto genre a None
+    if genre is None or genre == '':
+        return None   
+    # Altrimenti parserizzo in AND il genere
+    else:
+        return qparser.parse(f"({genre}")
+
 # Funzione filtro che seleziona la data o un range di date
 def date_filter(query):
 
@@ -62,14 +82,14 @@ def date_filter(query):
     to_date = str.replace(query['to'], '-', '')
 
     # Inizializzo il range con le date recuperate dalla gui
-    date_range = f"Edate:[{from_date} to {to_date}]"
+    date_range = f"date:[{from_date} to {to_date}]"
 
     # Se è settata solo la data di fine imposto data_range a "to to_date"
     if not from_date and to_date is not None:
-        date_range = f"Edate:[to {to_date}]"
+        date_range = f"date:[to {to_date}]"
     # Altrimenti se è settata solo la data di inizio imposto data_range a "from_date to today"
     elif from_date is not None and not to_date:  # if just the ending date is unset
-        date_range = f"Edate:[{from_date} to today]"
+        date_range = f"date:[{from_date} to today]"
 
     return date_range
 
@@ -78,10 +98,10 @@ def my_query(query, count):
 
     # Apro l'index
     root = os.path.abspath(os.curdir)
-    ix = open_dir(root + r'\indexdir')
+    ix = open_dir(root + r'/indexdir')
 
     # Creo un parser su più campi (titolo e contenuto) raggruppati in OR e con la ricerca automatica sulla variazione morfologica delle parole
-    qp = MultifieldParser(["Atitle","Bcontent","Cdirector"],schema=ix.schema,group=OrGroup,termclass=Variations)
+    qp = MultifieldParser(["Atitle","Bcontent","Cdirector","Dgenre"],schema=ix.schema,group=OrGroup,termclass=Variations)
     
     # Aggiungo il pluggin per il parsing della data
     qp.add_plugin(DateParserPlugin(free=True))
@@ -89,12 +109,14 @@ def my_query(query, count):
     # Recupero il filtro delle sorgenti da passare alla query
     sources = source_filter(query, ix)
 
-    #Recupero il filtro del produttore da passare alla query
+    #Recupero il filtro del regista da passare alla query
     director = director_filter(query, ix)
+
+    #Recupero il filtro del genere da passare alla query
+    genre = genre_filter(query, ix)
     
     # Recupero la query dalla gui
     query_text = query['text']
-    print("our query " + query_text)
 
     # Controllo se è una query per concetti
     query_text = concept_query(query_text)
@@ -108,12 +130,18 @@ def my_query(query, count):
         query_text += " AND " + date_range
     
     # Se non imposto nessun parametro mi ritorna una lista di dizionari vuota (Controllo utile per advanced)
-    if query_text == "" and director is None and query['imdb'] is None and query['themovie'] is None and query['filmsomniac'] is None and date_range is None:
+    if query_text == "" and director is None and query['imdb'] is None and query['themovie'] is None and query['filmsomniac'] is None and date_range is None and genre is None:
         return [{}],0 
 
     # Se abbiamo settato un regista aggiungo la ricerca per regista (in AND)   
     if director is not None:
         query_text = "(" + query_text + ") AND " + str(director)
+
+    # Se abbiamo settato un genere aggiungo la ricerca per genere (in AND)   
+    if genre is not None:
+        query_text = "(" + query_text + ") AND " + str(genre)
+
+    print("our query " + query_text)
 
     # Parserizzo la query
     q = qp.parse(query_text)
@@ -135,7 +163,7 @@ def search(ix,sources,q,count,bool):
     scores = sorting.ScoreFacet()
 
     # Variabile per fare il sorting sulla data
-    date = sorting.FieldFacet("Edate")
+    date = sorting.FieldFacet("date")
 
     # Se ho settato la data il filtro sarà per data e per score
     if bool:
@@ -144,7 +172,7 @@ def search(ix,sources,q,count,bool):
         lista_sort = [scores]
 
     # Cerco i match, li aggiungo per chiave ad un dizionario, e poi aggiungo il dizionario a una lista per poi ritornarla alla gui
-    with ix.searcher() as searcher:
+    with ix.searcher(weighting=scoring.BM25F()) as searcher:
         results = searcher.search(q, limit=count, filter=sources, terms=True, sortedby=lista_sort)
         results.fragmenter.charlimit = None
         results.fragmenter.maxchars = 300
@@ -153,7 +181,7 @@ def search(ix,sources,q,count,bool):
         for result in results:
             dicto = {}
             for f in result.fields():
-                if f == "Edate":
+                if f == "date":
                     data =  result[f]
                     data = data.date()
                     dicto.update({f"{f}":data})
